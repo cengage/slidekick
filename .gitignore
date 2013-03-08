@@ -1,0 +1,9 @@
+.coverage_data
+.coverignore
+.coverrc
+node_modules
+_SpecRunner.html
+.project
+.settings
+.idea
+npm-debug.log
