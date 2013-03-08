@@ -9,7 +9,7 @@ https://github.com/cengage/Slidekick/issues
 
 ## Documentation
 
-https://github.com/cengage/Slidekick//tree/master/test
+https://github.com/cengage/Slidekick/tree/master/test
 
 ## Backlog
 
