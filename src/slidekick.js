@@ -71,10 +71,6 @@
 			return this;
 		},
 
-		toPage: function (index) {
-			return this._toBuffer(index);
-		},
-
 		_toBuffer: function (index) {
 			if (index === this.selected) {
 				return this;
@@ -389,20 +385,15 @@
 	}
 
 	function slide(slidekick, index) {
-		var deferred = $.Deferred();
 		setupSlideAnimation(slidekick, slidekick.options.duration);
 		slideHorizontal(slidekick, slidekick.$slider.x);
 		setTimeout(function () {
 			cleanUpSlideAnimation(slidekick);
 			updateSelected(slidekick, index, 1);
-			deferred.resolve();
 		}, slidekick.options.duration);
-
-		return deferred;
 	}
 
 	function jQuerySlide(slidekick, index) {
-		var deferred = $.Deferred();
 		slidekick.running = true;
 		adjustBuffers(slidekick);
 		toggleScrollBars(slidekick, 'hidden');
@@ -412,9 +403,8 @@
 			slidekick.running = false;
 			toggleScrollBars(slidekick, 'auto');
 			updateSelected(slidekick, index, 1);
-			deferred.resolve();
 		});
-		return deferred;
+
 	}
 
 	function sign(number) {

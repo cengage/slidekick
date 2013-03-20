@@ -689,20 +689,6 @@ describe('slidekick', function () {
 
 						expect($.fn.css).not.toHaveBeenCalledWith('overflow', 'hidden');
 					});
-
-
-					it('"toPage" method should return a deferred object and resolve it once the animation is done', function () {
-						createViews(2);
-						jasmine.Clock.useMock();
-
-						var def = slidekick.toPage(1);
-
-						expect(def.state()).toBe("pending");
-						//Move clock forward
-						jasmine.Clock.tick(slidekick.options.duration + 1);
-						expect(def.state()).toBe("resolved");
-					});
-
 				});
 
 				describe('IE9 and Safari5', function () {
