@@ -87,6 +87,22 @@ describe('slidekick', function () {
 			$.fn.slidekick.transform = old;
 		});
 
+		it('should use transitions and jqueryslide for Chrome 26+', function () {
+			var oldTransform = $.fn.slidekick.transform;
+			$.fn.slidekick.transform = undefined;
+
+			var old_chrome26Plus = $.fn.slidekick.chrome26Plus;
+			$.fn.slidekick.chrome26Plus = true;
+
+			expect($container.slidekick({
+				transitions: true
+			}).options.transitions).toBe(true);
+			expect($.fn.slidekick.usejQuerySlide()).toBe(true);
+
+			$.fn.slidekick.chrome26Plus = old_chrome26Plus;
+			$.fn.slidekick.transform = oldTransform;
+		});
+
 		it('should set the containers overflow to hidden', function () {
 			expect($container.slidekick().$container.css('overflow')).toBe('hidden');
 		});

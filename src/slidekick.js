@@ -538,6 +538,10 @@
 		return (/(MSIE 9\.0;)/).test(root.navigator.userAgent);
 	}
 
+	function chrome26Plus() {
+		return (/Chrome[\/\s]([2-9][6-9])/).test(root.navigator.userAgent);
+	}
+
 	function cssEscape(style) {
 		return style.replace(/-(\w)/g, function _replace(p1, p2) {
 			return p2.toUpperCase();
@@ -556,8 +560,9 @@
 	Slidekick.ie9 = ie9();
 	Slidekick.safari5 = safari5();
 	Slidekick.firefox19 = fireFox19();
+	Slidekick.chrome26Plus = chrome26Plus();
 	Slidekick.usejQuerySlide = function () {
-		return this.ie9 || this.safari5 || this.firefox19;
+		return this.ie9 || this.safari5 || this.firefox19 || this.chrome26Plus;
 	};
 
 })(this, this.document, this.jQuery);
