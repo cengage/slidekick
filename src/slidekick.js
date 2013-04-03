@@ -526,8 +526,8 @@
 		return false;
 	}
 
-	function fireFox19() {
-		return (/Firefox[\/\s](19)/).test(root.navigator.userAgent);
+	function fireFox19Plus() {
+		return (/Firefox[\/\s](19|[2-9][0-9])/).test(root.navigator.userAgent);
 	}
 
 	function safari5() {
@@ -559,10 +559,10 @@
 	Slidekick.transitionTimingFunction = findStyle('transition-timing-function');
 	Slidekick.ie9 = ie9();
 	Slidekick.safari5 = safari5();
-	Slidekick.firefox19 = fireFox19();
+	Slidekick.fireFox19Plus = fireFox19Plus();
 	Slidekick.chrome26Plus = chrome26Plus();
 	Slidekick.usejQuerySlide = function () {
-		return this.ie9 || this.safari5 || this.firefox19 || this.chrome26Plus;
+		return this.ie9 || this.safari5 || this.fireFox19Plus || this.chrome26Plus;
 	};
 
 })(this, this.document, this.jQuery);

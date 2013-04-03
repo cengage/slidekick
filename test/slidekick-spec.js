@@ -47,13 +47,26 @@ describe('slidekick', function () {
 		it('should set transition to false if there is no transform support', function () {
 			var old = $.fn.slidekick.transform;
 			$.fn.slidekick.transform = undefined;
+			var old_ie9 = $.fn.slidekick.ie9;
+			$.fn.slidekick.ie9 = false;
+			var old_safari5 = $.fn.slidekick.safari5;
+			$.fn.slidekick.safari5 = false;
+			var old_fireFox19Plus = $.fn.slidekick.fireFox19Plus;
+			$.fn.slidekick.fireFox19Plus = false;
+			var old_chrome26Plus = $.fn.slidekick.chrome26Plus;
+			$.fn.slidekick.chrome26Plus = false;
 
 			expect($container.slidekick({
 				transitions: true
 			}).options.transitions).toBe(false);
 
+			$.fn.slidekick.ie9 = old_ie9;
+			$.fn.slidekick.safari5 = old_safari5;
+			$.fn.slidekick.fireFox19Plus = old_fireFox19Plus;
+			$.fn.slidekick.chrome26Plus = old_chrome26Plus;
 			$.fn.slidekick.transform = old;
 		});
+
 
 		it('should set transition to true for IE9', function () {
 			var old = $.fn.slidekick.transform;
@@ -85,6 +98,22 @@ describe('slidekick', function () {
 			$.fn.slidekick.safari5 = old_safari5;
 
 			$.fn.slidekick.transform = old;
+		});
+
+		it('should use transitions and jqueryslide for Firefox 19+', function () {
+			var oldTransform = $.fn.slidekick.transform;
+			$.fn.slidekick.transform = undefined;
+
+			var old_fireFox19Plus = $.fn.slidekick.fireFox19Plus;
+			$.fn.slidekick.fireFox19Plus = true;
+
+			expect($container.slidekick({
+				transitions: true
+			}).options.transitions).toBe(true);
+			expect($.fn.slidekick.usejQuerySlide()).toBe(true);
+
+			$.fn.slidekick.fireFox19Plus = old_fireFox19Plus;
+			$.fn.slidekick.transform = oldTransform;
 		});
 
 		it('should use transitions and jqueryslide for Chrome 26+', function () {
@@ -132,7 +161,7 @@ describe('slidekick', function () {
 		});
 	});
 
-	describe('swipping on mobile', function () {
+	describe('swiping on mobile', function () {
 		var slidekick;
 
 		beforeEach(function () {
