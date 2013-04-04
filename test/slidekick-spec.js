@@ -832,6 +832,14 @@ describe('slidekick', function () {
 
 					expect(callback).toHaveBeenCalledWith(jasmine.any($.Event), slidekick.get(1), 1);
 				});
+
+				it('should call "animationend" when animation is done', function () {
+					slidekick.on('animationend', callback);
+
+					slidekick.to(2);
+
+					expect(callback).toHaveBeenCalledWith(jasmine.any($.Event), slidekick.get(2), 2);
+				});
 			});
 		});
 

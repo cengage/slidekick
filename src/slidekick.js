@@ -367,6 +367,7 @@
 		slidekick.$container.trigger(prefix + 'hide', [slidekick.get(slidekick.selected), slidekick.selected]);
 		slidekick.selected = index;
 		slidekick.$container.trigger(prefix + 'show', [slidekick.get(index), index]);
+		slidekick.$container.trigger(prefix + 'animationend', [slidekick.get(index), index]);
 	}
 
 	function singleBuffer(slidekick, index) {
