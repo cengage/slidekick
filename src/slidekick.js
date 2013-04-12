@@ -206,6 +206,7 @@
 			duration: '800',
 			transitions: true,
 			skipScroll: false,
+			forcejQuery: false,
 			buffer: {
 				classes: ''
 			},
@@ -454,7 +455,7 @@
 	}
 
 	function performSlide(slidekick, index) {
-		if (Slidekick.usejQuerySlide()) {
+		if (Slidekick.usejQuerySlide() || slidekick.options.forcejQuery) {
 			return jQuerySlide(slidekick, index);
 		}
 

@@ -159,6 +159,33 @@ describe('slidekick', function () {
 
 			expect($.fn.scrollLeft).toHaveBeenCalledWith(0);
 		});
+
+		it("uses jQuery for animation if forcejQuery option is true", function () {
+			spyOn($.fn, "animate");
+
+			var mockView = {
+				$el: $("<div></div>")
+			};
+
+			var slidekick = $container.slidekick({
+				forcejQuery: true,
+				transitions: true,
+				pageNavigator: {
+					next: function () {
+						slidekick.to(slidekick.at() + 1);
+					}
+				}
+			});
+			slidekick.add(50);
+			slidekick.to(0);
+			spyOn(slidekick, "get").andReturn(mockView);
+
+			slidekick.next();
+
+			expect($.fn.animate).toHaveBeenCalledWith({
+				left: slidekick.$slider.x
+			}, slidekick.options.duration, jasmine.any(Function));
+		});
 	});
 
 	describe('swiping on mobile', function () {
