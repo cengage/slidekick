@@ -761,7 +761,38 @@ describe('slidekick', function () {
 
 						expect($.fn.css).not.toHaveBeenCalledWith('overflow', 'hidden');
 					});
+
+					it("does not allow swapping buffers when an animation is in progress", function () {
+						slidekick.to(2);
+						slidekick.to(1);
+
+						expect(slidekick.$buffers[0].html()).toBe('<span>1</span>');
+						expect(slidekick.$buffers[1].html()).toBe('<span>2</span>');
+						expect(slidekick.$buffers[2].html()).toBe('<span>0</span>');
+					});
+
+					describe("stopping transitions", function () {
+
+						it("allows the buffers to be swapped after a stop", function () {
+							slidekick.to(2);
+							slidekick.stop();
+							slidekick.to(1);
+
+							expect(slidekick.$buffers[0].html()).toBe('<span>0</span>');
+							expect(slidekick.$buffers[1].html()).toBe('<span>1</span>');
+							expect(slidekick.$buffers[2].html()).toBe('<span>2</span>');
+						});
+
+						it("stops the jQuery animation explicitly", function () {
+							spyOn($.fn, "stop");
+
+							slidekick.stop();
+
+							expect($.fn.stop).toHaveBeenCalled();
+						});
+					});
 				});
+
 
 				describe('IE9 and Safari5', function () {
 

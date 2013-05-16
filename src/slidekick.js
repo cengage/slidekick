@@ -65,6 +65,11 @@
 			return this;
 		},
 
+		stop: function () {
+			this.running = false;
+			this.$slider.stop();
+		},
+
 		to: function (index) {
 			this._toBuffer(index);
 
