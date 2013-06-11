@@ -188,6 +188,41 @@ describe('slidekick', function () {
 		});
 	});
 
+	describe('accessibility', function () {
+		beforeEach(function () {
+			jasmine.Clock.useMock();
+		});
+
+		it('should display all buffered views before sliding, and update to only display middle view, when triple buffered, on completion', function () {
+			var mockView = {
+				$el: $("<div></div>")
+			};
+
+			var slidekick = $container.slidekick({
+				transitions: true,
+				duration: 10,
+				pageNavigator: {
+					next: function () {
+						slidekick.to(slidekick.at() + 1);
+					}
+				}
+			});
+			slidekick.add(3);
+			slidekick.to(0);
+			slidekick.next();
+
+			expect(slidekick.$buffers[0].css('display')).toBe('block');
+			expect(slidekick.$buffers[1].css('display')).toBe('block');
+			expect(slidekick.$buffers[2].css('display')).toBe('block');
+
+			jasmine.Clock.tick(20);
+
+			expect(slidekick.$buffers[0].css('display')).toBe('none');
+			expect(slidekick.$buffers[1].css('display')).toBe('block');
+			expect(slidekick.$buffers[2].css('display')).toBe('none');
+		});
+	});
+
 	describe('swiping on mobile', function () {
 		var slidekick;
 
