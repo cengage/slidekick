@@ -22,7 +22,7 @@
 	var prefix = 'slidekick-';
 	var push = [].push;
 	var styles = document.createElement('div').style;
-	var cssPrefixes = '-webkit-,-moz-,-o-,-ms-,'.split(',');
+	var cssPrefixes = ['-webkit-', '-moz-', '-o-', '-ms-', ''];
 	var LEFT = -1,
 		CENTER = 0,
 		RIGHT = 1;
