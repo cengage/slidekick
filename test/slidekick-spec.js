@@ -44,26 +44,15 @@ describe('slidekick', function () {
 			expect($.fn.slidekick.transitionDuration).toBeDefined();
 		});
 
-		it('should set transition to false if there is no transform support', function () {
+		it('should set transition to false when there is no transform support', function () {
 			var old = $.fn.slidekick.transform;
 			$.fn.slidekick.transform = undefined;
-			var old_ie9 = $.fn.slidekick.ie9;
-			$.fn.slidekick.ie9 = false;
-			var old_safari5 = $.fn.slidekick.safari5;
-			$.fn.slidekick.safari5 = false;
-			var old_fireFox19Plus = $.fn.slidekick.fireFox19Plus;
-			$.fn.slidekick.fireFox19Plus = false;
-			var old_chrome26Plus = $.fn.slidekick.chrome26Plus;
-			$.fn.slidekick.chrome26Plus = false;
+			spyOn($.fn.slidekick, 'usejQuerySlide').andReturn(false);
 
 			expect($container.slidekick({
 				transitions: true
 			}).options.transitions).toBe(false);
 
-			$.fn.slidekick.ie9 = old_ie9;
-			$.fn.slidekick.safari5 = old_safari5;
-			$.fn.slidekick.fireFox19Plus = old_fireFox19Plus;
-			$.fn.slidekick.chrome26Plus = old_chrome26Plus;
 			$.fn.slidekick.transform = old;
 		});
 
@@ -200,7 +189,7 @@ describe('slidekick', function () {
 
 			var slidekick = $container.slidekick({
 				transitions: true,
-				duration: 10,
+				duration: 0,
 				pageNavigator: {
 					next: function () {
 						slidekick.to(slidekick.at() + 1);
@@ -209,14 +198,12 @@ describe('slidekick', function () {
 			});
 			slidekick.add(3);
 			slidekick.to(0);
+			slidekick.$buffers[0].css('display', 'inline');
+			slidekick.$buffers[1].css('display', 'block');
+			slidekick.$buffers[2].css('display', 'inline');
 			slidekick.next();
 
-			expect(slidekick.$buffers[0].css('display')).toBe('block');
-			expect(slidekick.$buffers[1].css('display')).toBe('block');
-			expect(slidekick.$buffers[2].css('display')).toBe('block');
-
-			jasmine.Clock.tick(20);
-
+			jasmine.Clock.tick(1);
 			expect(slidekick.$buffers[0].css('display')).toBe('none');
 			expect(slidekick.$buffers[1].css('display')).toBe('block');
 			expect(slidekick.$buffers[2].css('display')).toBe('none');

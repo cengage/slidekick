@@ -227,6 +227,7 @@
 
 		setupProxies(slidekick);
 		setupBuffers(slidekick);
+		updateForAccessibility(slidekick);
 	}
 
 	function setupSlideAnimation(slidekick, duration) {
@@ -470,7 +471,7 @@
 	}
 
 	function setBufferDisplay(slidekick, displays) {
-		if (!slidekick.options.swipe.enabled) {
+		if (!slidekick.options.swipe.enabled && slidekick.options.transitions) {
 			for (var index = 0; index < displays.length; index++) {
 				slidekick.$buffers[index].css('display', displays[index]);
 			}
