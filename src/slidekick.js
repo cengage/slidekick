@@ -397,7 +397,7 @@
 		setTimeout(function () {
 			cleanUpSlideAnimation(slidekick);
 			updateSelected(slidekick, index, 1);
-			updateForAccessibility(slidekick);
+			//updateForAccessibility(slidekick);
 		}, slidekick.options.duration);
 	}
 
@@ -411,7 +411,7 @@
 			slidekick.running = false;
 			toggleScrollBars(slidekick, 'auto');
 			updateSelected(slidekick, index, 1);
-			updateForAccessibility(slidekick);
+			//			updateForAccessibility(slidekick);
 		});
 
 	}
@@ -485,8 +485,7 @@
 		var distance = slidekick.$container.width(),
 			isLeftShift = index - slidekick.selected === 1 || (slidekick.options.loop && index === 0 && slidekick.selected === slidekick.size() - 1);
 
-		setBufferDisplay(slidekick, ['block', 'block', 'block']);
-
+		//		setBufferDisplay(slidekick, ['block', 'block', 'block']);
 		if (isLeftShift) {
 			slidekick.$slider.x -= distance;
 			slidekick.$buffers.push(slidekick.$buffers.shift());
