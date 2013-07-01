@@ -190,6 +190,10 @@
 
 		updateOrientation: function (event) {
 			adjustBuffers(this);
+		},
+
+		setSideBuffersVisible: function (isVisible) {
+			setSideBuffersVisible(this, isVisible);
 		}
 	});
 
@@ -218,7 +222,8 @@
 			swipe: {
 				enabled: false,
 				toleranceX: 100
-			}
+			},
+			autoChangeVisibility: true
 		}, options);
 
 		if ((!Slidekick.transform || !Slidekick.transitionDuration) && !Slidekick.usejQuerySlide()) {
@@ -227,7 +232,8 @@
 
 		setupProxies(slidekick);
 		setupBuffers(slidekick);
-		updateForAccessibility(slidekick);
+
+		updateVisibilityForKeyboard(slidekick, false);
 	}
 
 	function setupSlideAnimation(slidekick, duration) {
@@ -398,7 +404,7 @@
 		setTimeout(function () {
 			cleanUpSlideAnimation(slidekick);
 			updateSelected(slidekick, index, 1);
-			updateForAccessibility(slidekick);
+			updateVisibilityForKeyboard(slidekick, false);
 		}, slidekick.options.duration);
 	}
 
@@ -412,7 +418,7 @@
 			slidekick.running = false;
 			toggleScrollBars(slidekick, 'auto');
 			updateSelected(slidekick, index, 1);
-			updateForAccessibility(slidekick);
+			updateVisibilityForKeyboard(slidekick, false);
 		});
 
 	}
@@ -478,15 +484,25 @@
 		}
 	}
 
-	function updateForAccessibility(slidekick) {
-		setBufferDisplay(slidekick, ['none', 'block', 'none']);
+	function updateVisibilityForKeyboard(slidekick, isBeforeSlide) {
+		if (slidekick.options.autoChangeVisibility) {
+			setSideBuffersVisible(slidekick, isBeforeSlide);
+		}
+	}
+
+	function setSideBuffersVisible(slidekick, isVisible) {
+		if (isVisible === true) {
+			setBufferDisplay(slidekick, ['block', 'block', 'block']);
+		} else {
+			setBufferDisplay(slidekick, ['none', 'block', 'none']);
+		}
 	}
 
 	function shiftBuffers(slidekick, index) {
 		var distance = slidekick.$container.width(),
 			isLeftShift = index - slidekick.selected === 1 || (slidekick.options.loop && index === 0 && slidekick.selected === slidekick.size() - 1);
 
-		setBufferDisplay(slidekick, ['block', 'block', 'block']);
+		updateVisibilityForKeyboard(slidekick, true);
 
 		if (isLeftShift) {
 			slidekick.$slider.x -= distance;
