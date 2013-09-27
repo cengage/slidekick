@@ -22,7 +22,7 @@ describe('slidekick', function () {
 			expect($container.slidekick().constructor).toBe($.fn.slidekick);
 		});
 
-		it('should maintain a reference to it\'s jQuery wrapped container element', function () {
+		it('should maintain a reference to its jQuery wrapped container element', function () {
 			expect($container.slidekick().$container).toBe($container);
 		});
 
@@ -77,14 +77,14 @@ describe('slidekick', function () {
 			var old = $.fn.slidekick.transform;
 			$.fn.slidekick.transform = undefined;
 
-			var old_safari5 = $.fn.slidekick.safari5;
-			$.fn.slidekick.safari5 = true;
+			var old_safari5 = $.fn.slidekick.safari5Plus;
+			$.fn.slidekick.safari5Plus = true;
 
 			expect($container.slidekick({
 				transitions: true
 			}).options.transitions).toBe(true);
 
-			$.fn.slidekick.safari5 = old_safari5;
+			$.fn.slidekick.safari5Plus = old_safari5;
 
 			$.fn.slidekick.transform = old;
 		});
@@ -182,11 +182,35 @@ describe('slidekick', function () {
 			jasmine.Clock.useMock();
 		});
 
-		it('should display all buffered views before sliding, and update to only display middle view, when triple buffered, on completion', function () {
-			var mockView = {
-				$el: $("<div></div>")
-			};
+		function buildThreeBuffers(slidekick) {
+			slidekick.add(3);
+			slidekick.to(0);
+			slidekick.$buffers[0].css('display', 'inline');
+			slidekick.$buffers[1].css('display', 'block');
+			slidekick.$buffers[2].css('display', 'inline');
+		}
 
+		it('should update buffers to display all three before sliding, when autoChangeVisibility is turned on', function () {
+			var slidekick = $container.slidekick({
+				transitions: true,
+				duration: 20,
+				pageNavigator: {
+					next: function () {
+						slidekick.to(slidekick.at() + 1);
+					}
+				},
+				autoChangeVisibility: true
+			});
+			buildThreeBuffers(slidekick);
+
+			slidekick.next();
+
+			expect(slidekick.$buffers[0].css('display')).toBe('block');
+			expect(slidekick.$buffers[1].css('display')).toBe('block');
+			expect(slidekick.$buffers[2].css('display')).toBe('block');
+		});
+
+		it('should update buffers to only display middle view, when triple buffered, when autoChangeVisibility is turned on', function () {
 			var slidekick = $container.slidekick({
 				transitions: true,
 				duration: 0,
@@ -194,19 +218,66 @@ describe('slidekick', function () {
 					next: function () {
 						slidekick.to(slidekick.at() + 1);
 					}
-				}
+				},
+				autoChangeVisibility: true
 			});
-			slidekick.add(3);
-			slidekick.to(0);
-			slidekick.$buffers[0].css('display', 'inline');
-			slidekick.$buffers[1].css('display', 'block');
-			slidekick.$buffers[2].css('display', 'inline');
+			buildThreeBuffers(slidekick);
+
 			slidekick.next();
 
 			jasmine.Clock.tick(1);
 			expect(slidekick.$buffers[0].css('display')).toBe('none');
 			expect(slidekick.$buffers[1].css('display')).toBe('block');
 			expect(slidekick.$buffers[2].css('display')).toBe('none');
+		});
+
+		it('should not update buffers visibility if autoChangeVisibility is turned off', function () {
+			var slidekick = $container.slidekick({
+				transitions: true,
+				duration: 0,
+				pageNavigator: {
+					next: function () {
+						slidekick.to(slidekick.at() + 1);
+					}
+				},
+				autoChangeVisibility: false
+			});
+			buildThreeBuffers(slidekick);
+			slidekick.$buffers[2].css('display', 'inline-block');
+
+			slidekick.next();
+
+			expect(slidekick.$buffers[0].css('display')).toBe('block');
+			expect(slidekick.$buffers[1].css('display')).toBe('inline-block');
+
+			jasmine.Clock.tick(1);
+			expect(slidekick.$buffers[0].css('display')).toBe('block');
+			expect(slidekick.$buffers[1].css('display')).toBe('inline-block');
+		});
+
+		describe('setSideBuffersVisible', function () {
+
+			it('makes all three buffers visible when passing true', function () {
+				var slidekick = $container.slidekick();
+				buildThreeBuffers(slidekick);
+
+				slidekick.setSideBuffersVisible(true);
+
+				expect(slidekick.$buffers[0].css('display')).toBe('block');
+				expect(slidekick.$buffers[1].css('display')).toBe('block');
+				expect(slidekick.$buffers[2].css('display')).toBe('block');
+			});
+
+			it('sets the buffer display to none/block/none when passing false', function () {
+				var slidekick = $container.slidekick();
+				buildThreeBuffers(slidekick);
+
+				slidekick.setSideBuffersVisible(false);
+
+				expect(slidekick.$buffers[0].css('display')).toBe('none');
+				expect(slidekick.$buffers[1].css('display')).toBe('block');
+				expect(slidekick.$buffers[2].css('display')).toBe('none');
+			});
 		});
 	});
 
