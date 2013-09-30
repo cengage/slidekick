@@ -155,7 +155,7 @@
 
 			this.setCurrentPosition(point);
 
-			if (!this.hasMovedFarEnough()) {
+			if (!this.isValidHorizontalSwipe()) {
 				return;
 			}
 
@@ -165,7 +165,7 @@
 			slideHorizontal(this, this.$slider.x + delta);
 		},
 
-		hasMovedFarEnough: function () {
+		isValidHorizontalSwipe: function () {
 			if (this.horizontalSteps < 10 && this.verticalSteps < 10) {
 				return false;
 			}
