@@ -77,14 +77,14 @@ describe('slidekick', function () {
 			var old = $.fn.slidekick.transform;
 			$.fn.slidekick.transform = undefined;
 
-			var old_safari5 = $.fn.slidekick.safari5;
-			$.fn.slidekick.safari5 = true;
+			var old_safari5 = $.fn.slidekick.safari5Plus;
+			$.fn.slidekick.safari5Plus = true;
 
 			expect($container.slidekick({
 				transitions: true
 			}).options.transitions).toBe(true);
 
-			$.fn.slidekick.safari5 = old_safari5;
+			$.fn.slidekick.safari5Plus = old_safari5;
 
 			$.fn.slidekick.transform = old;
 		});
