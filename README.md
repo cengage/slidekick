@@ -1,17 +1,17 @@
 Slidekick
 =========
 
-[![Build Status](https://api.travis-ci.org/cengage/Slidekick.png)](http://travis-ci.org/cengage/Slidekick)
+[![Build Status](https://api.travis-ci.org/cengage/slidekick.png)](http://travis-ci.org/cengage/slidekick)
 
 JQuery CSS3 slider / carousel with touch support for swipe gestures.
 
 ## Issues / Bugs
 
-https://github.com/cengage/Slidekick/issues
+https://github.com/cengage/slidekick/issues
 
 ## Documentation
 
-https://github.com/cengage/Slidekick/tree/master/test
+https://github.com/cengage/slidekick/tree/master/test
 
 ## Backlog
 
