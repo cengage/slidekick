@@ -130,16 +130,12 @@
 			this.initiated = true;
 			this.directionLocked = false;
 
-			this.setCurrentPosition(point);
+			this.currentXPosition = point.pageX;
+			this.currentYPosition = point.pageY;
 			this.horizontalSteps = 0;
 			this.verticalSteps = 0;
 
 			setupSlideAnimation(this, 0);
-		},
-
-		setCurrentPosition: function (point) {
-			this.currentXPosition = point.pageX;
-			this.currentYPosition = point.pageY;
 		},
 
 		move: function (event) {
@@ -153,9 +149,14 @@
 			this.horizontalSteps += Math.abs(point.pageX - this.currentXPosition);
 			this.verticalSteps += Math.abs(point.pageY - this.currentYPosition);
 
-			this.setCurrentPosition(point);
+			this.currentXPosition = point.pageX;
+			this.currentYPosition = point.pageY;
 
-			if (!this.isValidHorizontalSwipe()) {
+			if (this.horizontalSteps < 10 && this.verticalSteps < 10) {
+				return;
+			}
+
+			if (!this.directionLocked && this.verticalSteps > this.horizontalSteps) {
 				return;
 			}
 
@@ -163,14 +164,6 @@
 			preventVerticalScrolling(event);
 
 			slideHorizontal(this, this.$slider.x + delta);
-		},
-
-		isValidHorizontalSwipe: function () {
-			if (this.horizontalSteps < 10 && this.verticalSteps < 10) {
-				return false;
-			}
-
-			return this.directionLocked || this.verticalSteps <= this.horizontalSteps;
 		},
 
 		up: function (event) {
@@ -184,19 +177,15 @@
 
 			var point = event.originalEvent.changedTouches ? event.originalEvent.changedTouches[0] : event.originalEvent,
 				deltaX = point.pageX - this.$slider.startX,
+				absoluteDeltaX = Math.abs(deltaX),
+				absoluteDeltaY = Math.abs(point.pageY - this.$slider.startY),
 				startingSliderPosition = this.$slider.x;
 
-			if (this.isSwipeLongEnough(point)) {
+			if (absoluteDeltaY - absoluteDeltaX < 0 && absoluteDeltaX >= this.options.swipe.toleranceX) {
 				changePage(this, deltaX);
 			}
 
 			resetSliderWhenNoPageChange(this, startingSliderPosition);
-		},
-
-		isSwipeLongEnough: function (point) {
-			var absoluteDeltaX = Math.abs(point.pageX - this.$slider.startX),
-				absoluteDeltaY = Math.abs(point.pageY - this.$slider.startY);
-			return absoluteDeltaX > absoluteDeltaY && absoluteDeltaX >= this.options.swipe.toleranceX;
 		},
 
 		updateOrientation: function (event) {
@@ -204,7 +193,7 @@
 		},
 
 		setSideBuffersVisible: function (isVisible) {
-			setSideBuffersVisible(this, isVisible);
+	        setSideBuffersVisible(this, isVisible);
 		}
 	});
 
@@ -215,7 +204,7 @@
 			'position': 'relative'
 		});
 
-		slidekick.$container.on('scroll', function () {
+		slidekick.$container.on('scroll', function (event) {
 			$(this).scrollLeft(0);
 		});
 
@@ -263,7 +252,7 @@
 	}
 
 	function slideHorizontal(slidekick, x) {
-		slidekick.$slider.css(Slidekick.transform, 'translate(' + x + 'px, 0) translateZ(0)');
+	    slidekick.$slider.css(Slidekick.transform, 'translate(' + x + 'px, 0) translateZ(0)');
 	}
 
 	function preventVerticalScrolling(event) {
@@ -304,7 +293,7 @@
 
 	function createSlider(slidekick) {
 		slidekick.$slider = $('<div></div>').css({
-			position: 'relative',
+      position: 'relative',
 			top: '0',
 			height: '100%',
 			width: '100%'
@@ -387,7 +376,7 @@
 		}
 	}
 
-	function updateSelected(slidekick, index) {
+	function updateSelected(slidekick, index, visibleBuffer) {
 		slidekick.$container.trigger(prefix + 'hide', [slidekick.get(slidekick.selected), slidekick.selected]);
 		slidekick.selected = index;
 		slidekick.$container.trigger(prefix + 'show', [slidekick.get(index), index]);
@@ -396,7 +385,7 @@
 
 	function singleBuffer(slidekick, index) {
 		loadBuffer(slidekick, slidekick.$buffers[0], index);
-		updateSelected(slidekick, index);
+		updateSelected(slidekick, index, 0);
 	}
 
 	function toggleScrollBars(slidekick, value) {
@@ -414,7 +403,7 @@
 		slideHorizontal(slidekick, slidekick.$slider.x);
 		setTimeout(function () {
 			cleanUpSlideAnimation(slidekick);
-			updateSelected(slidekick, index);
+			updateSelected(slidekick, index, 1);
 			updateVisibilityForKeyboard(slidekick, false);
 		}, slidekick.options.duration);
 	}
@@ -428,7 +417,7 @@
 		}, slidekick.options.duration, function () {
 			slidekick.running = false;
 			toggleScrollBars(slidekick, 'auto');
-			updateSelected(slidekick, index);
+			updateSelected(slidekick, index, 1);
 			updateVisibilityForKeyboard(slidekick, false);
 		});
 
@@ -505,8 +494,8 @@
 		if (isVisible === true) {
 			setBufferDisplay(slidekick, ['block', 'block', 'block']);
 		} else {
-		setBufferDisplay(slidekick, ['none', 'block', 'none']);
-	}
+			setBufferDisplay(slidekick, ['none', 'block', 'none']);
+		}
 	}
 
 	function shiftBuffers(slidekick, index) {
@@ -536,7 +525,7 @@
 	function repositionBuffers(slidekick, index) {
 		loadBuffers(slidekick, index);
 		slidekick.running = false;
-		updateSelected(slidekick, index);
+		updateSelected(slidekick, index, 1);
 	}
 
 	function tripleBuffer(slidekick, index) {
@@ -581,16 +570,20 @@
 		return (/Firefox[\/\s](19|[2-9][0-9])/).test(root.navigator.userAgent);
 	}
 
-	function safari5Plus() {
-		return (/(Version\/[5-6])+.*(Safari)+/g).test(root.navigator.userAgent) && !(/iP(ad|hone|od)/).test(root.navigator.platform);
+	function safari5() {
+		return (/(Version\/5)+.*(Safari)+/g).test(root.navigator.userAgent);
 	}
 
 	function ie9() {
 		return (/(MSIE 9\.0;)/).test(root.navigator.userAgent);
 	}
 
+    function ie11() {
+        return !!root.navigator.userAgent.match(/Trident.*rv[ :]*11\./);
+    }
+
 	function chrome26Plus() {
-		return (/Chrome[\/\s](2[6-9]|[3-9][0-9])/).test(root.navigator.userAgent);
+		return (/Chrome[\/\s]([2-9][6-9])/).test(root.navigator.userAgent);
 	}
 
 	function cssEscape(style) {
@@ -609,11 +602,12 @@
 	Slidekick.transitionDuration = findStyle('transition-duration');
 	Slidekick.transitionTimingFunction = findStyle('transition-timing-function');
 	Slidekick.ie9 = ie9();
-	Slidekick.safari5Plus = safari5Plus();
+    Slidekick.ie11 = ie11();
+    Slidekick.safari5 = safari5();
 	Slidekick.fireFox19Plus = fireFox19Plus();
 	Slidekick.chrome26Plus = chrome26Plus();
 	Slidekick.usejQuerySlide = function () {
-		return this.ie9 || this.safari5Plus || this.fireFox19Plus || this.chrome26Plus;
+		return this.ie9 || this.ie11 || this.safari5 || this.fireFox19Plus || this.chrome26Plus;
 	};
 
 })(this, this.document, this.jQuery);
